@@ -1,0 +1,48 @@
+server:
+  port: 8989
+spring:
+  application:
+    name: GATEWAY-SERVICE
+  cloud:
+    nacos: #配置nacos
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+    gateway:
+      routes:
+        - id: order
+          uri: lb://order-service
+          predicates:
+            - Path=/order/**
+        #          filters:
+        #            - name: CircuitBreaker
+        #              args:
+        #                name: order-service
+        #                fallbackuri: forward:/orderFallBack
+        - id: payment
+          uri: lb://payment-service
+          predicates:
+            - Path=/payment/**
+  #          filters:
+  #            - name: CircuitBreaker
+  #              args:
+  #                name: payment-service
+  #                fallbackuri: forward:/paymentFallback
+
+#网关日志
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: TRACE
+
+#hystrix:
+#  command:
+#    fallbackcmd:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 5000
+
